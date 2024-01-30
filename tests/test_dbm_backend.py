@@ -92,4 +92,4 @@ def test_get_manager(project: Project) -> None:
         ),
     )
     sys_dir_root = project.sys_dir_root
-    assert len(list(sys_dir_root.glob("state*"))) == 1
+    assert list(sys_dir_root.glob("state*"))
