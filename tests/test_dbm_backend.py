@@ -92,4 +92,4 @@ def test_get_manager(project: Project) -> None:
         ),
     )
     sys_dir_root = project.sys_dir_root
-    assert sys_dir_root.joinpath("state.db").exists()
+    assert len(list(sys_dir_root.glob("state*"))) == 1
