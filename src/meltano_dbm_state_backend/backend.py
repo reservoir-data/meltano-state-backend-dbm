@@ -38,29 +38,17 @@ class DBMStateStoreManager(StateStoreManager):  # type: ignore[misc]
         """
         if state.is_complete():
             with shelve.open(self.path, "c") as db:  # noqa: S301
-                db[state.state_id] = {
-                    "completed": state.completed_state,
-                    "partial": state.partial_state,
-                }
+                db[state.state_id] = state.json()
                 return
 
         with shelve.open(self.path, "c") as db:  # noqa: S301
-            existing_state: dict[str, t.Any] | None = db.get(state.state_id)
-
-            if existing_state:
-                state_to_write = JobState(
-                    state_id=state.state_id,
-                    completed_state=existing_state.get("completed", {}),
-                    partial_state=existing_state.get("partial", {}),
-                )
+            if existing_state := db.get(state.state_id):
+                state_to_write = JobState.from_json(state.state_id, existing_state)
                 state_to_write.merge_partial(state)
             else:
                 state_to_write = state
 
-            db[state.state_id] = {
-                "completed": state_to_write.completed_state,
-                "partial": state_to_write.partial_state,
-            }
+            db[state.state_id] = state_to_write.json()
 
     def get(self, state_id: str) -> JobState | None:
         """Get state for the given state_id.
@@ -70,17 +58,9 @@ class DBMStateStoreManager(StateStoreManager):  # type: ignore[misc]
             Dict representing state that would be used in the next run.
         """
         with shelve.open(self.path, "r") as db:  # noqa: S301
-            state_dict: dict[str, t.Any] | None = db.get(state_id)
+            state: str | None = db.get(state_id)
 
-        return (
-            JobState(
-                state_id=state_id,
-                completed_state=state_dict.get("completed", {}),
-                partial_state=state_dict.get("partial", {}),
-            )
-            if state_dict
-            else None
-        )
+        return JobState.from_json(state_id, state) if state else None
 
     def clear(self, state_id: str) -> None:
         """Clear state for the given state_id.
