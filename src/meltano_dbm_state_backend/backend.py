@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+import dbm
 import fnmatch
-import shelve
 import typing as t
 
 from meltano.core.job_state import JobState
@@ -37,11 +37,11 @@ class DBMStateStoreManager(StateStoreManager):  # type: ignore[misc]
             state: The state to set
         """
         if state.is_complete():
-            with shelve.open(self.path, "c") as db:  # noqa: S301
+            with dbm.open(self.path, "c") as db:  # noqa: S301
                 db[state.state_id] = state.json()
                 return
 
-        with shelve.open(self.path, "c") as db:  # noqa: S301
+        with dbm.open(self.path, "c") as db:  # noqa: S301
             if existing_state := db.get(state.state_id):
                 state_to_write = JobState.from_json(state.state_id, existing_state)
                 state_to_write.merge_partial(state)
@@ -57,8 +57,8 @@ class DBMStateStoreManager(StateStoreManager):  # type: ignore[misc]
         Returns:
             Dict representing state that would be used in the next run.
         """
-        with shelve.open(self.path, "r") as db:  # noqa: S301
-            state: str | None = db.get(state_id)
+        with dbm.open(self.path, "r") as db:  # noqa: S301
+            state: bytes | None = db.get(state_id)
 
         return JobState.from_json(state_id, state) if state else None
 
@@ -67,7 +67,7 @@ class DBMStateStoreManager(StateStoreManager):  # type: ignore[misc]
         Args:
             state_id: the state_id to clear state for
         """
-        with shelve.open(self.path, "w") as db:  # noqa: S301
+        with dbm.open(self.path, "w") as db:  # noqa: S301
             del db[state_id]
 
     def get_state_ids(self, pattern: str | None = None) -> list[str]:
@@ -77,11 +77,14 @@ class DBMStateStoreManager(StateStoreManager):  # type: ignore[misc]
         Returns:
             List of state_ids available in this state store manager.
         """
-        with shelve.open(self.path, "r") as db:  # noqa: S301
+        with dbm.open(self.path, "r") as db:  # noqa: S301
             return [
-                state_id
-                for state_id in db
-                if not pattern or fnmatch.fnmatch(state_id, pattern)
+                state_id.decode()  # type: ignore[union-attr]
+                # dbm objects are not iterable, so we need to use the keys() method
+                # https://github.com/python/cpython/issues/49986
+                # https://github.com/python/cpython/issues/53732
+                for state_id in db.keys()  # noqa: SIM118
+                if not pattern or fnmatch.fnmatch(state_id, pattern)  # type: ignore[type-var]
             ]
 
     def acquire_lock(self, state_id: str) -> None:

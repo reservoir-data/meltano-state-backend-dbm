@@ -23,7 +23,7 @@ def project(tmp_path: Path) -> Project:
 
 
 def test_state_store(tmp_path: Path) -> None:
-    path = tmp_path / "test_dict"
+    path = tmp_path / "test_db"
     manager = DBMStateStoreManager(
         uri=f"dbm://{path.resolve().as_posix()}",
         write_buffer_size=None,
