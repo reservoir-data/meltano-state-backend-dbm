@@ -11,8 +11,8 @@ description = "Meltano DBM State Backend"
 readme = "README.md"
 keywords = [
   "backend",
-  "meltano",
   "DBM",
+  "meltano",
   "state",
 ]
 license = "MIT"
