@@ -91,7 +91,6 @@ check = "mypy --strict --install-types --non-interactive {args:src/meltano_dbm_s
 
 [tool.ruff]
 line-length = 88
-target-version = "py38"
 
 [tool.ruff.lint]
 ignore = [
