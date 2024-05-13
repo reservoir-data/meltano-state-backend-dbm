@@ -57,6 +57,7 @@ optional-dependencies.typing = [
   "mypy>=1",
 ]
 entry-points."meltano.state_backends".dbm = "meltano_dbm_state_backend.backend:DBMStateStoreManager"
+
 [tool.hatch.version]
 source = "vcs"
 
