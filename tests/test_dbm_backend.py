@@ -11,7 +11,7 @@ from meltano.core.state_store import state_store_manager_from_project_settings
 from meltano_dbm_state_backend.backend import DBMStateStoreManager
 
 
-@pytest.fixture()
+@pytest.fixture
 def project(tmp_path: Path) -> Project:
     path = tmp_path / "project"
     shutil.copytree(
