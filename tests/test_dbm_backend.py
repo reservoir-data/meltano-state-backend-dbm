@@ -1,14 +1,19 @@
 from __future__ import annotations
 
 import shutil
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
-from meltano.core.job_state import JobState
 from meltano.core.project import Project
-from meltano.core.state_store import state_store_manager_from_project_settings
+from meltano.core.state_store import (
+    MeltanoState,
+    state_store_manager_from_project_settings,
+)
 
 from meltano_dbm_state_backend.backend import DBMStateStoreManager
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 @pytest.fixture
@@ -30,9 +35,8 @@ def test_state_store(tmp_path: Path) -> None:
     )
 
     # Set initial state
-    initial_state = JobState(
+    initial_state = MeltanoState(
         state_id="test",
-        updated_at=None,
         partial_state={},
         completed_state={"key": "value"},
     )
@@ -46,9 +50,8 @@ def test_state_store(tmp_path: Path) -> None:
     assert manager.get_state_ids() == ["test"]
 
     # Merge partial state with existing state
-    new_state = JobState(
+    new_state = MeltanoState(
         state_id="test",
-        updated_at=None,
         partial_state={"key": "value"},
         completed_state={},
     )
@@ -84,9 +87,8 @@ def test_get_manager(project: Project) -> None:
     assert manager.path.endswith(".meltano/state")
 
     manager.set(
-        JobState(
+        MeltanoState(
             state_id="test",
-            updated_at=None,
             partial_state={},
             completed_state={"key": "value"},
         ),

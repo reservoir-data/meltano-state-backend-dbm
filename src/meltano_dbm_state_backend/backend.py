@@ -5,9 +5,12 @@ from __future__ import annotations
 import dbm
 import fnmatch
 import typing as t
+from contextlib import contextmanager
 
-from meltano.core.job_state import JobState
-from meltano.core.state_store.base import StateStoreManager
+from meltano.core.state_store.base import MeltanoState, StateStoreManager
+
+if t.TYPE_CHECKING:
+    from collections.abc import Generator
 
 
 class DBMStateStoreManager(StateStoreManager):  # type: ignore[misc]
@@ -30,54 +33,59 @@ class DBMStateStoreManager(StateStoreManager):  # type: ignore[misc]
         self.uri = uri
         self.scheme, self.path = uri.split("://", 1)
 
-    def set(self, state: JobState) -> None:
+    def set(self, state: MeltanoState) -> None:
         """Set state for the given state_id.
 
         Args:
             state: The state to set
         """
         if state.is_complete():
-            with dbm.open(self.path, "c") as db:  # noqa: S301
+            with dbm.open(self.path, "c") as db:
                 db[state.state_id] = state.json()
                 return
 
-        with dbm.open(self.path, "c") as db:  # noqa: S301
+        with dbm.open(self.path, "c") as db:
             if existing_state := db.get(state.state_id):
-                state_to_write = JobState.from_json(state.state_id, existing_state)
+                state_to_write = MeltanoState.from_json(state.state_id, existing_state)
                 state_to_write.merge_partial(state)
             else:
                 state_to_write = state
 
             db[state.state_id] = state_to_write.json()
 
-    def get(self, state_id: str) -> JobState | None:
+    def get(self, state_id: str) -> MeltanoState | None:
         """Get state for the given state_id.
+
         Args:
-            state_id: The state_id to get state for
+            state_id: The state_id to get state for.
+
         Returns:
             Dict representing state that would be used in the next run.
         """
-        with dbm.open(self.path, "r") as db:  # noqa: S301
+        with dbm.open(self.path, "r") as db:
             state: bytes | None = db.get(state_id)
 
-        return JobState.from_json(state_id, state) if state else None
+        return MeltanoState.from_json(state_id, state) if state else None
 
     def clear(self, state_id: str) -> None:
         """Clear state for the given state_id.
+
         Args:
             state_id: the state_id to clear state for
         """
-        with dbm.open(self.path, "w") as db:  # noqa: S301
+        with dbm.open(self.path, "w") as db:
             del db[state_id]
 
     def get_state_ids(self, pattern: str | None = None) -> list[str]:
         """Get all state_ids available in this state store manager.
+
         Args:
             pattern: glob-style pattern to filter by
+
         Returns:
             List of state_ids available in this state store manager.
         """
-        with dbm.open(self.path, "r") as db:  # noqa: S301
+        with dbm.open(self.path, "r") as db:
             return [
                 state_id.decode()  # type: ignore[union-attr]
                 # dbm objects are not iterable, so we need to use the keys() method
@@ -87,9 +95,17 @@ class DBMStateStoreManager(StateStoreManager):  # type: ignore[misc]
                 if not pattern or fnmatch.fnmatch(state_id, pattern)  # type: ignore[type-var]
             ]
 
-    def acquire_lock(self, state_id: str) -> None:
+    @contextmanager
+    def acquire_lock(  # noqa: PLR6301
+        self,
+        state_id: str,  # noqa: ARG002
+        *,
+        retry_seconds: int,  # noqa: ARG002
+    ) -> Generator[None, None, None]:
         """Acquire a naive lock for the given job's state.
+
         Args:
             state_id: the state_id to lock
+            retry_seconds: the number of seconds to wait before retrying
         """
-        pass  # pragma: no cover
+        yield  # pragma: no cover
