@@ -24,7 +24,7 @@ def project(tmp_path: Path) -> Project:
         path,
         ignore=shutil.ignore_patterns(".meltano/**"),
     )
-    return Project.find(path.resolve())
+    return Project.find(path.resolve())  # type: ignore[no-any-return]
 
 
 def test_state_store(tmp_path: Path) -> None:
