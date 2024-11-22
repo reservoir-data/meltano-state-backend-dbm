@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import dbm
 import fnmatch
+import json
 import typing as t
 from contextlib import contextmanager
 
@@ -13,7 +14,11 @@ if t.TYPE_CHECKING:
     from collections.abc import Generator
 
 
-class DBMStateStoreManager(StateStoreManager):  # type: ignore[misc]
+def _decode_state_bytes(state: bytes) -> str:
+    return state.decode(json.detect_encoding(state), "surrogatepass")
+
+
+class DBMStateStoreManager(StateStoreManager):
     """A state store manager that uses DBM/shelve as the backend."""
 
     label: str = "DBM-based shelve state store manager"
@@ -46,7 +51,10 @@ class DBMStateStoreManager(StateStoreManager):  # type: ignore[misc]
 
         with dbm.open(self.path, "c") as db:
             if existing_state := db.get(state.state_id):
-                state_to_write = MeltanoState.from_json(state.state_id, existing_state)
+                state_to_write = MeltanoState.from_json(
+                    state.state_id,
+                    _decode_state_bytes(existing_state),
+                )
                 state_to_write.merge_partial(state)
             else:
                 state_to_write = state
@@ -65,7 +73,11 @@ class DBMStateStoreManager(StateStoreManager):  # type: ignore[misc]
         with dbm.open(self.path, "r") as db:
             state: bytes | None = db.get(state_id)
 
-        return MeltanoState.from_json(state_id, state) if state else None
+        return (
+            MeltanoState.from_json(state_id, _decode_state_bytes(state))
+            if state
+            else None
+        )
 
     def clear(self, state_id: str) -> None:
         """Clear state for the given state_id.
