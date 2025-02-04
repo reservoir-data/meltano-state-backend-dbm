@@ -13,15 +13,22 @@ This is a [Meltano][meltano] extension that provides a [`dbm`][dbm] [state backe
 
 This package needs to be installed in the same Python environment as Meltano.
 
-### With [pipx]
+### From GitHub
 
-#### From GitHub
+#### With [pipx]
 
 ```bash
-pipx install meltano
-pipx inject 'meltano-dbm-state-backend @ git+https://github.com/edgarrmondragon/meltano-dbm-state-backend.git'
+pipx install 'meltano @ git+https://github.com/meltano/meltano@state-backend-plugins'
+pipx inject meltano 'meltano-dbm-state-backend @ git+https://github.com/edgarrmondragon/meltano-dbm-state-backend.git'
 ```
-#### From PyPI
+
+#### With [uv]
+
+```bash
+uv tool install --from 'meltano @ git+https://github.com/meltano/meltano@state-backend-plugins' --with 'meltano-dbm-state-backend @ git+https://github.com/edgarrmondragon/meltano-dbm-state-backend.git' meltano
+```
+
+### From PyPI
 
 _This package is not yet available on PyPI._
 
@@ -42,3 +49,4 @@ state_backend:
 [dbm]: https://docs.python.org/3/library/dbm.html
 [state-backend]: https://docs.meltano.com/concepts/state_backends
 [pipx]: https://github.com/pypa/pipx
+[uv]: https://docs.astral.sh/uv
