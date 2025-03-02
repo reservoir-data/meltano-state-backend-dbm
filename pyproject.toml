@@ -45,8 +45,7 @@ dynamic = [
   "version",
 ]
 dependencies = [
-  # TODO: Refer to a PyPI release once this branch is merged and released
-  "meltano @ git+https://github.com/meltano/meltano@state-backend-plugins",
+  "meltano>=3.7.0a4",
 ]
 entry-points."meltano.state_backends".dbm = "meltano_dbm_state_backend.backend:DBMStateStoreManager"
 
@@ -62,9 +61,6 @@ testing = [
 typing = [
   "mypy>=1",
 ]
-
-[tool.hatch.metadata]
-allow-direct-references = true
 
 [tool.hatch.version]
 source = "vcs"
