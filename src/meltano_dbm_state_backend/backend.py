@@ -44,22 +44,8 @@ class DBMStateStoreManager(StateStoreManager):
         Args:
             state: The state to set
         """
-        if state.is_complete():
-            with dbm.open(self.path, "c") as db:
-                db[state.state_id] = state.json()
-                return
-
         with dbm.open(self.path, "c") as db:
-            if existing_state := db.get(state.state_id):
-                state_to_write = MeltanoState.from_json(
-                    state.state_id,
-                    _decode_state_bytes(existing_state),
-                )
-                state_to_write.merge_partial(state)
-            else:
-                state_to_write = state
-
-            db[state.state_id] = state_to_write.json()
+            db[state.state_id] = state.json()
 
     def get(self, state_id: str) -> MeltanoState | None:
         """Get state for the given state_id.
@@ -79,7 +65,7 @@ class DBMStateStoreManager(StateStoreManager):
             else None
         )
 
-    def clear(self, state_id: str) -> None:
+    def delete(self, state_id: str) -> None:
         """Clear state for the given state_id.
 
         Args:

@@ -45,7 +45,7 @@ dynamic = [
   "version",
 ]
 dependencies = [
-  "meltano>=3.7.0a4",
+  "meltano>=3.7",
 ]
 entry-points."meltano.state_backends".dbm = "meltano_dbm_state_backend.backend:DBMStateStoreManager"
 
