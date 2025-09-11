@@ -10,7 +10,7 @@ from meltano.core.state_store import (
     state_store_manager_from_project_settings,
 )
 
-from meltano_dbm_state_backend.backend import DBMStateStoreManager
+from meltano_state_backend_dbm.backend import DBMStateStoreManager
 
 if TYPE_CHECKING:
     from pathlib import Path

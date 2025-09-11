@@ -1,11 +1,4 @@
-# `meltano-dbm-state-backend`
-
-⚠️ **EXPERIMENTAL: See https://github.com/meltano/meltano/pull/8367.** ⚠️
-
-<!--
-[![PyPI version](https://img.shields.io/pypi/v/meltano-dbm-state-backend.svg?logo=pypi&logoColor=FFE873&color=blue)](https://pypi.org/project/meltano-dbm-state-backend)
-[![Python versions](https://img.shields.io/pypi/pyversions/meltano-dbm-state-backend.svg?logo=python&logoColor=FFE873)](https://pypi.org/project/meltano-dbm-state-backend)
--->
+# `meltano-state-backend-dbm`
 
 This is a [Meltano][meltano] extension that provides a [`dbm`][dbm] [state backend][state-backend].
 
@@ -18,14 +11,14 @@ This package needs to be installed in the same Python environment as Meltano.
 #### With [pipx]
 
 ```bash
-pipx install 'meltano @ git+https://github.com/meltano/meltano@state-backend-plugins'
-pipx inject meltano 'meltano-dbm-state-backend @ git+https://github.com/edgarrmondragon/meltano-dbm-state-backend.git'
+pipx install meltano
+pipx inject meltano 'meltano-state-backend-dbm @ git+https://github.com/reservoir-data/meltano-state-backend-dbm.git'
 ```
 
 #### With [uv]
 
 ```bash
-uv tool install --from 'meltano @ git+https://github.com/meltano/meltano@state-backend-plugins' --with 'meltano-dbm-state-backend @ git+https://github.com/edgarrmondragon/meltano-dbm-state-backend.git' meltano
+uv tool install --with 'meltano-state-backend-dbm @ git+https://github.com/reservoir-data/meltano-state-backend-dbm.git' meltano
 ```
 
 ### From PyPI
