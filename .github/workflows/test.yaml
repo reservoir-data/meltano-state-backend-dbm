@@ -58,7 +58,7 @@ jobs:
   test:
     name: Pytest (Python ${{ matrix.python-version }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.python-version == '3.13' }}
+    continue-on-error: ${{ matrix.python-version == '3.14' }}
     strategy:
       fail-fast: false
       matrix:
@@ -70,10 +70,10 @@ jobs:
           - "3.13"
           - "3.14"
         include:
-          - python-version: "3.13"
+          - python-version: "3.14"
             os: "windows-latest"
 
-          - python-version: "3.13"
+          - python-version: "3.14"
             os: "macos-latest"
 
     steps:
