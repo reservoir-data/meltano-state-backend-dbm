@@ -1,6 +1,6 @@
 # `meltano-state-backend-dbm`
 
-This is a [Meltano][meltano] extension that provides a [`dbm`][dbm] [state backend][state-backend].
+This is a [Meltano] extension that provides a [`dbm`][dbm] [state backend][state-backend].
 
 ## Installation
 
@@ -36,10 +36,10 @@ state_backend:
 
 ### Environment Variables
 
-* `MELTANO_STATE_BACKEND_URI`: The URI of the DBM state backend.
+- `MELTANO_STATE_BACKEND_URI`: The URI of the DBM state backend.
 
-[meltano]: https://meltano.com
 [dbm]: https://docs.python.org/3/library/dbm.html
-[state-backend]: https://docs.meltano.com/concepts/state_backends
+[meltano]: https://meltano.com
 [pipx]: https://github.com/pypa/pipx
+[state-backend]: https://docs.meltano.com/concepts/state_backends
 [uv]: https://docs.astral.sh/uv
