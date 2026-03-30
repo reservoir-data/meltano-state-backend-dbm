@@ -85,12 +85,12 @@ class DBMStateStoreManager(StateStoreManager):
         """
         with dbm.open(self.path, "r") as db:
             return [
-                state_id.decode()  # type: ignore[union-attr]
+                state_id.decode()  # type: ignore[union-attr]  # ty:ignore[unresolved-attribute]
                 # dbm objects are not iterable, so we need to use the keys() method
                 # https://github.com/python/cpython/issues/49986
                 # https://github.com/python/cpython/issues/53732
                 for state_id in db.keys()  # noqa: SIM118
-                if not pattern or fnmatch.fnmatch(state_id, pattern)  # type: ignore[type-var]
+                if not pattern or fnmatch.fnmatch(state_id, pattern)  # type: ignore[type-var]  # ty:ignore[invalid-argument-type]
             ]
 
     @contextmanager
