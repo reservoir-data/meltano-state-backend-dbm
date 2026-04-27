@@ -38,6 +38,7 @@ dynamic = [
 ]
 dependencies = [
   "meltano>=3.7",
+  "typing-extensions>=4.15; python_full_version<'3.12'",
 ]
 [[project.authors]]
 name = "Edgar Ramírez Mondragón"

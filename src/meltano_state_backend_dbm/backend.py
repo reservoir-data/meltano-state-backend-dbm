@@ -5,12 +5,18 @@ from __future__ import annotations
 import dbm
 import fnmatch
 import json
-import typing as t
+import sys
 from contextlib import contextmanager
+from typing import TYPE_CHECKING, Any
 
 from meltano.core.state_store.base import MeltanoState, StateStoreManager
 
-if t.TYPE_CHECKING:
+if sys.version_info >= (3, 12):
+    from typing import override
+else:
+    from typing_extensions import override
+
+if TYPE_CHECKING:
     from collections.abc import Generator
 
 
@@ -21,12 +27,15 @@ def _decode_state_bytes(state: bytes) -> str:
 class DBMStateStoreManager(StateStoreManager):
     """A state store manager that uses DBM/shelve as the backend."""
 
-    label: str = "DBM-based shelve state store manager"
+    @property
+    @override
+    def label(self) -> str:
+        return "DBM-based shelve state store manager"
 
     def __init__(
         self,
         uri: str,
-        **kwargs: t.Any,
+        **kwargs: Any,
     ) -> None:
         """Create a DBMStateStoreManager.
 
@@ -38,6 +47,7 @@ class DBMStateStoreManager(StateStoreManager):
         self.uri = uri
         self.scheme, self.path = uri.split("://", 1)
 
+    @override
     def set(self, state: MeltanoState) -> None:
         """Set state for the given state_id.
 
@@ -47,6 +57,7 @@ class DBMStateStoreManager(StateStoreManager):
         with dbm.open(self.path, "c") as db:
             db[state.state_id] = state.json()
 
+    @override
     def get(self, state_id: str) -> MeltanoState | None:
         """Get state for the given state_id.
 
@@ -65,6 +76,7 @@ class DBMStateStoreManager(StateStoreManager):
             else None
         )
 
+    @override
     def delete(self, state_id: str) -> None:
         """Clear state for the given state_id.
 
@@ -74,6 +86,7 @@ class DBMStateStoreManager(StateStoreManager):
         with dbm.open(self.path, "w") as db:
             del db[state_id]
 
+    @override
     def get_state_ids(self, pattern: str | None = None) -> list[str]:
         """Get all state_ids available in this state store manager.
 
@@ -93,12 +106,13 @@ class DBMStateStoreManager(StateStoreManager):
                 if not pattern or fnmatch.fnmatch(state_id, pattern)  # type: ignore[type-var]  # ty:ignore[invalid-argument-type]
             ]
 
+    @override
     @contextmanager
-    def acquire_lock(  # noqa: PLR6301
+    def acquire_lock(
         self,
-        state_id: str,  # noqa: ARG002
+        state_id: str,
         *,
-        retry_seconds: int,  # noqa: ARG002
+        retry_seconds: float,
     ) -> Generator[None, None, None]:
         """Acquire a naive lock for the given job's state.
 

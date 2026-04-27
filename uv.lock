@@ -737,6 +737,7 @@ name = "meltano-state-backend-dbm"
 source = { editable = "." }
 dependencies = [
     { name = "meltano" },
+    { name = "typing-extensions", marker = "python_full_version < '3.12'" },
 ]
 
 [package.dev-dependencies]
@@ -758,7 +759,10 @@ typing = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "meltano", git = "https://github.com/meltano/meltano.git" }]
+requires-dist = [
+    { name = "meltano", git = "https://github.com/meltano/meltano.git" },
+    { name = "typing-extensions", marker = "python_full_version < '3.12'", specifier = ">=4.15.0" },
+]
 
 [package.metadata.requires-dev]
 dev = [
