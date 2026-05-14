@@ -101,6 +101,7 @@ select = [
   "FURB", # refurb
   "G",    # flake8-logging-format
   "I",    # isort
+  "ICN",  # flake8-import-conventions
   "INP",  # flake8-no-pep420
   "ISC",  # flake8-implicit-str-concat
   "LOG",  # flake8-logging
@@ -131,9 +132,8 @@ select = [
   "YTT",  # flake8-2020
 ]
 ignore = [
-  "S310",  # Allow `urllib.open`
-  "S603",  # Allow `subprocess.run(..., shell=False)`
-  "UP026", # Replace `mock` import with `unittest.mock` - remove once Python 3.7 support is dropped
+  "S310", # Allow `urllib.open`
+  "S603", # Allow `subprocess.run(..., shell=False)`
 ]
 per-file-ignores."tests/**" = [
   "D",    # Don't lint docstrings in tests
