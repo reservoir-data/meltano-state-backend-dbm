@@ -102,7 +102,7 @@ class DBMStateStoreManager(StateStoreManager):
                 # dbm objects are not iterable, so we need to use the keys() method
                 # https://github.com/python/cpython/issues/49986
                 # https://github.com/python/cpython/issues/53732
-                for state_id in db.keys()  # noqa: SIM118
+                for state_id in db.keys()  # ruff: ignore[in-dict-keys]
                 if not pattern or fnmatch.fnmatch(state_id, pattern)  # type: ignore[type-var]  # ty:ignore[invalid-argument-type]
             ]
 
