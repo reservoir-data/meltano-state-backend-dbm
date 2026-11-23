@@ -98,7 +98,7 @@ class DBMStateStoreManager(StateStoreManager):
         """
         with dbm.open(self.path, "r") as db:
             return [
-                state_id.decode()  # type: ignore[union-attr]  # ty:ignore[unresolved-attribute]
+                state_id.decode() if isinstance(state_id, bytes) else state_id
                 # dbm objects are not iterable, so we need to use the keys() method
                 # https://github.com/python/cpython/issues/49986
                 # https://github.com/python/cpython/issues/53732
