@@ -2,7 +2,7 @@
 build-backend = "hatchling.build"
 requires = [
   "hatch-vcs==0.5",
-  "hatchling==1.31.0",
+  "hatchling==1.33",
 ]
 
 [project]
@@ -16,7 +16,7 @@ keywords = [
   "state",
 ]
 license = "MIT"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
@@ -25,7 +25,6 @@ classifiers = [
   "Intended Audience :: System Administrators",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
@@ -42,14 +41,14 @@ dependencies = [
   "meltano>=3.7",
   "typing-extensions>=4.15; python_full_version<'3.12'",
 ]
+[[project.maintainers]]
+name = "Edgar Ramírez Mondragón"
+email = "edgarrm358@gmail.com"
 [[project.authors]]
 name = "Edgar Ramírez Mondragón"
 email = "edgarrm358@gmail.com"
 [project.entry-points]
 "meltano.state_backends".dbm = "meltano_state_backend_dbm.backend:DBMStateStoreManager"
-[[project.maintainers]]
-name = "Edgar Ramírez Mondragón"
-email = "edgarrm358@gmail.com"
 
 [dependency-groups]
 dev = [
@@ -67,16 +66,17 @@ typing = [
 ]
 
 [tool.hatch.version]
-fallback = "0.1.0.dev0"
 source = "vcs"
+fallback = "0.1.0.dev0"
 
 [tool.uv]
-required-version = ">=0.10"
+required-version = ">=0.13"
 prerelease = "allow"
 [tool.uv.sources]
 meltano = { git = "https://github.com/meltano/meltano.git" }
 
 [tool.ruff]
+required-version = ">=0.17"
 line-length = 88
 preview = true
 [tool.ruff.lint]
@@ -133,12 +133,12 @@ select = [
   "YTT",  # flake8-2020
 ]
 ignore = [
-  "suspicious-url-open-usage",
   "subprocess-without-shell-equals-true",
+  "suspicious-url-open-usage",
 ]
 per-file-ignores."tests/**" = [
-  "D",      # Don't lint docstrings in tests
   "assert",
+  "D",      # Don't lint docstrings in tests
 ]
 flake8-annotations.allow-star-arg-any = true
 flake8-annotations.mypy-init-return = true
@@ -147,7 +147,7 @@ flake8-pytest-style.parametrize-values-type = "tuple"
 pydocstyle.convention = "google"
 
 [tool.pyproject-fmt]
-max_supported_python = "3.15"
+max_supported_python = "3.16"
 table_format = "long"
 
 [tool.mypy]
@@ -169,6 +169,14 @@ minversion = "9"
 strict = true
 testpaths = [ "tests" ]
 
+[tool.coverage.run]
+source = [
+  "meltano_state_backend_dbm",
+  "tests",
+]
+branch = true
+parallel = true
+relative_files = true
 [tool.coverage.paths]
 package = [
   "src/meltano_state_backend_dbm/",
@@ -178,20 +186,12 @@ package = [
 exclude_also = [
   "if (t\\.)?TYPE_CHECKING:",
 ]
-[tool.coverage.run]
-branch = true
-parallel = true
-relative_files = true
-source = [
-  "meltano_state_backend_dbm",
-  "tests",
-]
 
 [tool.tox]
 requires = [ "tox>=4.51", "tox-uv" ]
 env_list = [
   { product = [
-    { prefix = "3.", start = 10 },
+    { prefix = "3.", start = 11 },
   ] },
   "coverage",
   "typing",
